@@ -3,13 +3,13 @@
 ################求每月各省在架率和平均面值###################
 #############################################################
 
-##移动##
-##取消“省份”和“来源”的单元格合并，删除日期为“合计值”、“平均值”，保存为UTF-8的csv##
+##Sheet：移动##
+##取消“省份”和“来源”的单元格合并，删除日期为“合计值”、“平均值”、空白值，保存为UTF-8的csv##
 
 library(tidyverse)
 
 # 导入文件
-yidong <- read.table("D:/Temp/交易量统计/7月移动（截止到30日）.csv", 
+yidong <- read.table("D:/Temp/交易量统计/本月移动.csv", 
                      header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
 # 筛选来源为“手Q/微信”，剔除面值为“AL”
@@ -22,10 +22,10 @@ yidong <- mutate(yidong, 上架 = parse_number(yidong$上架时长.分.))
 by_province <- group_by(yidong, 省份)
 temp <- summarise(by_province, 总交易量 = sum(交易量), 总交易笔数 = sum(交易笔数), 
                   总上架时长 = sum(上架), 观测数 = n())
-result <- mutate(temp, 在架率 = 总上架时长/(观测数*1440)*100, 
+result <- mutate(temp, 在架率 = 总上架时长/(观测数*1440), 
                  平均每笔面值 = 总交易量/总交易笔数) %>%
-  select(省份, 在架率, 每笔平均面值)
+  select(省份, 在架率, 平均每笔面值)
+# 在架率的单位是%
 
-# 根据省份输出在架率、平均面值
+# 查看结果，复制到在架率对比表格
 View(result)
-# filter(result, 省份 == "广东")
