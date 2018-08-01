@@ -1,0 +1,68 @@
+
+###############################################################
+##########################流量日报#############################
+###############################################################
+
+##各运营商的前两日数据，保存为UTF-8的csv##
+##对内流量日报数据，日期列取消单元格合并，保存为UTF-8的csv##
+
+library(tidyverse)
+
+# 导入文件
+liuliang <- read.table("D:/Temp/日报/数据分析/流量.csv", 
+                     header = TRUE, sep = ",", stringsAsFactors = FALSE)
+yidong <- read.table("D:/Temp/日报/数据分析/流量_移动.csv", 
+                     header = TRUE, sep = ",", stringsAsFactors = FALSE)
+liantong <- read.table("D:/Temp/日报/数据分析/流量_联通.csv", 
+                     header = TRUE, sep = ",", stringsAsFactors = FALSE)
+dianxin <- read.table("D:/Temp/日报/数据分析/流量_电信.csv", 
+                     header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+# 剔除产品类型为“合计值”“平均值,筛选日期
+yidong <- filter(yidong, 产品类型 != "合计值" & 产品类型 != "平均值")
+liantong <- filter(liantong, 产品类型 != "合计值" & 产品类型 != "平均值")
+dianxin <- filter(dianxin, 产品类型 != "合计值" & 产品类型 != "平均值")
+yidong_d2 <- filter(yidong, 日期 == "2018-07-31")
+liantong_d2 <- filter(liantong, 日期 == "2018-07-31")
+dianxin_d2 <- filter(dianxin, 日期 == "2018-07-31")
+
+# 将文本中的数字解析为数值，比率的单位是%
+liuliang$毛利率 <- parse_number(liuliang$毛利率)
+liuliang$总订单成功率 <- parse_number(liuliang$总订单成功率)
+liuliang$三分钟到账率 <- parse_number(liuliang$三分钟到账率)
+liuliang$十分钟到账率 <- parse_number(liuliang$十分钟到账率)
+
+# 判断质量达标情况
+# 移动
+ifelse(liuliang$总订单成功率[which(liuliang$运营商 == "移动")] >= 96, 
+       print("移动：成功率达标"), print("移动：成功率不达标"))
+ifelse(liuliang$三分钟到账率[which(liuliang$运营商 == "移动")] >= 70, 
+       print("移动：三分钟到账率达标"), print("移动：三分钟到账率不达标"))
+ifelse(liuliang$十分钟到账率[which(liuliang$运营商 == "移动")] >= 90, 
+       print("移动：十分钟到账率达标"), print("移动：十分钟到账率不达标"))
+# 联通
+ifelse(liuliang$总订单成功率[which(liuliang$运营商 == "联通")] >= 96, 
+       print("联通：成功率达标"), print("联通：成功率不达标"))
+ifelse(liuliang$三分钟到账率[which(liuliang$运营商 == "联通")] >= 70, 
+       print("联通：三分钟到账率达标"), print("联通：三分钟到账率不达标"))
+ifelse(liuliang$十分钟到账率[which(liuliang$运营商 == "联通")] >= 90, 
+       print("联通：十分钟到账率达标"), print("联通：十分钟到账率不达标"))
+# 电信
+ifelse(liuliang$总订单成功率[which(liuliang$运营商 == "电信")] >= 96, 
+       print("电信：成功率达标"), print("电信：成功率不达标"))
+ifelse(liuliang$三分钟到账率[which(liuliang$运营商 == "电信")] >= 70, 
+       print("电信：三分钟到账率达标"), print("电信：三分钟到账率不达标"))
+ifelse(liuliang$十分钟到账率[which(liuliang$运营商 == "电信")] >= 90, 
+       print("电信：十分钟到账率达标"), print("电信：十分钟到账率不达标"))
+
+# 计算3分钟和10分钟超时订单数，mutate
+
+# 对移动，输出各面值超时订单数最大的前N个省份和全国总超时订单数
+# 输出退款笔数最多的前N个省份和总退款笔数
+
+# 对联通和电信，输出超时订单数最大的前N个省份和全国总超时订单数
+# 输出退款笔数最多的前N个省份和总退款笔数
+
+# 输出三网和各运营商的两日销售额、毛利、毛利率及相应的环比
+# 输出量级最大的前N个省份移动的两日销售额、毛利、毛利率及相应的环比
+# 输出毛利变化绝对值最大的前N个省份移动的两日销售额、毛利、毛利率及相应的环比
